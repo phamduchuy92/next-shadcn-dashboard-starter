@@ -3,6 +3,14 @@ const nextConfig = {
   images: {
     domains: ["utfs.io"],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/admin/api/:path*',
+        destination: 'http://localhost:8000/api/:path*' // Proxy to Backend
+      }
+    ]
+  }
 };
 
 module.exports = nextConfig;
