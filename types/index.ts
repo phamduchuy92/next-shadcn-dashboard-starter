@@ -6,16 +6,15 @@ export interface NavItem {
   disabled?: boolean;
   external?: boolean;
   icon?: keyof typeof Icons;
-  label?: string;
-  description?: string;
+  open?: boolean;
 }
 
 export interface NavItemWithChildren extends NavItem {
-  items: NavItemWithChildren[];
+  children: NavItemWithChildren[];
 }
 
 export interface NavItemWithOptionalChildren extends NavItem {
-  items?: NavItemWithChildren[];
+  children?: NavItemWithOptionalChildren[];
 }
 
 export interface FooterItem {
@@ -26,7 +25,3 @@ export interface FooterItem {
     external?: boolean;
   }[];
 }
-
-export type MainNavItem = NavItemWithOptionalChildren;
-
-export type SidebarNavItem = NavItemWithChildren;
