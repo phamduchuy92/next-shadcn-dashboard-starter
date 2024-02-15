@@ -1,5 +1,4 @@
-import { Icons } from "@/components/icons";
-import { NavItem, SidebarNavItem } from "@/types";
+import { NavItemWithOptionalChildren } from "@/types";
 
 export type User = {
   id: number;
@@ -111,41 +110,62 @@ export type Employee = {
   profile_picture?: string | null; // Profile picture can be a string (URL) or null (if no picture)
 };
 
-export const navItems: NavItem[] = [
+export const navItems: NavItemWithOptionalChildren[] = [
   {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: "dashboard",
-    label: "Dashboard",
+    title: "Danh Mục Bài Viết",
+    href: "/admin/article-category",
+    icon: "user",
   },
   {
     title: "User",
-    href: "/dashboard/user",
+    href: "/admin/user",
     icon: "user",
-    label: "user",
   },
   {
     title: "Employee",
-    href: "/dashboard/employee",
+    href: "/admin/employee",
     icon: "employee",
-    label: "employee",
   },
   {
     title: "Profile",
-    href: "/dashboard/profile",
+    href: "/admin/profile",
     icon: "profile",
-    label: "profile",
   },
+  // {
+  //   title: "Bài viết",
+  //   href: "/admin",
+  //   icon: "post",
+  //   children: [
+  //     {
+  //       title: "Danh sách bài viết",
+  //       href: "/admin/article",
+  //       icon: "employee",
+  //     },
+  //     {
+  //       title: "Tạo mới bài viết",
+  //       href: "/admin/article/new",
+  //       icon: "employee",
+  //     },
+  //     {
+  //       title: "Danh sách category",
+  //       href: "/admin/article/category",
+  //       icon: "employee",
+  //     },
+  //     {
+  //       title: "Tạo mới category",
+  //       href: "/admin/article/category/new",
+  //       icon: "employee",
+  //     }
+  //   ]
+  // },
   {
     title: "Kanban",
-    href: "/dashboard/kanban",
+    href: "/admin/kanban",
     icon: "kanban",
-    label: "kanban",
   },
   {
     title: "Login",
     href: "/",
     icon: "login",
-    label: "login",
   },
 ];
