@@ -1,15 +1,17 @@
-import { Form, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Control, ControllerRenderProps, FieldValues, UseFormReturn } from "react-hook-form";
 import React from "react";
-import { Field } from "@/components/shared/ui/formly/field.type";
+import { FormlyField } from "@/components/shared/ui/formly/formly.field";
 
 export interface FormlyFieldConfig {
-  name: string;
-  type: string;
+  type?: string;
+  name?: string;
   field?: ControllerRenderProps;
-  control?: Control<FieldValues>;
   form?: UseFormReturn;
+  control?: Control<FieldValues, any>;
+  className?: string;
+  defaultValue?: any;
   props?: {
     label?: string;
     type?: string;
@@ -21,55 +23,37 @@ export interface FormlyFieldConfig {
     options?: { label: string; value: string }[];
     rows?: number;
   }
+  fieldGroupClassName?: string;
+  fieldGroup?: FormlyFieldConfig[];
+  fieldArray?: FormlyFieldConfig;
+  config?: FormlyFieldConfig;
+  model?: any;
 }
-interface FormlyAttributes {
+
+interface FormlyProps {
   form: UseFormReturn;
+  model: any;
   fields: FormlyFieldConfig[];
 }
 
-export const Formly: React.FC<FormlyAttributes> = ({ form, fields }) => {
-  const onSubmit = () => console.log('here', form.getValues());
+export const Formly: React.FC<FormlyProps> = ({ form, model, fields }) => {
+
+  const onSubmit = () => console.log('form values', form.getValues());
 
   return (
-    <>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          {fields.map(config => {
-            return (
-              <>
-                <FormField
-                  control={form.control}
-                  name={config.name}
-                  render={({ field }) => {
-                    config.field = field;
-                    config.control = form.control;
-                    config.form = form;
-                    return (
-                      <FormItem>
-                        {
-                          config.props?.label ? (
-                            <FormLabel>{config.props?.label}</FormLabel>
-                          ) : <></>
-                        }
-                        <Field field={field} type={config.type} form={form} name={config.name}  props={config.props}></Field>
-                        {
-                          config.props?.description ? (
-                          <FormDescription>
-                            {config.props?.description}
-                          </FormDescription>
-                          ) : <></>
-                        }
-                        <FormMessage />
-                      </FormItem>
-                    )
-                  }}
-                />
-              </>
-            )
-          })}
-          <Button type="submit">Submit</Button>
-        </form>
-      </Form>
-    </>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {fields.map(config => {
+          return (
+            <FormlyField key={`${config.name}`}
+                         form={form}
+                         model={model}
+                         config={config}
+            />
+          )
+        })}
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
   );
 }

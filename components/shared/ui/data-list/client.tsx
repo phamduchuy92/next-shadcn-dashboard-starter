@@ -7,13 +7,10 @@ import { Plus, RefreshCcw } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { getEndpointFor } from "@/components/shared/config/application-config.service";
 import { ColumnDef } from "@tanstack/react-table";
-import useSWR from 'swr';
-import useSWRImmutable from 'swr/immutable'
+import useSWR from "swr";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { CellAction } from "@/components/shared/ui/data-list/cell-action";
-import { AlertModal } from "@/components/shared/ui/data-list/alert-modal";
 
 interface DataListProps {
   title: string;

@@ -7,91 +7,114 @@ import { set } from "lodash";
 export default function Page() {
   const fields: FormlyFieldConfig[] = [
     {
-      name: "testinput",
-      type: "input",
-      props: {
-        label: "Test",
-        required: true,
-        description: "what the fuck"
-      }
+      name: "tab1",
+      type: "tabs",
+      fieldGroup: [
+        {
+          props: {
+            label: "Tab1"
+          },
+          fieldGroup: [
+            {
+              name: "testarea1",
+              type: "textarea",
+              props: {
+                label: "Test1",
+                required: true,
+                description: "what the fuck"
+              },
+              defaultValue: "dog"
+            },
+            // {
+            //   name: "testinput1",
+            //   type: "input",
+            //   props: {
+            //     label: "Test11",
+            //     required: true,
+            //     description: "what the fuck"
+            //   }
+            // },
+          ],
+        },
+        {
+          props: {
+            label: "Tab2"
+          },
+          fieldGroup: [
+            // {
+            //   name: "testselect",
+            //   type: "select",
+            //   // defaultValue: "dog",
+            //   props: {
+            //     label: "What is Your Favourite Pet?",
+            //     options: [
+            //       { label: "Dog 🐶", value: "dog" },
+            //       { label: "Cat 😺", value: "cat" }
+            //     ],
+            //     required: true, // error,
+            //   }
+            // },
+            // {
+            //   name: "testcombobox",
+            //   type: "combobox",
+            //   props: {
+            //     label: "What is Your Favourite Pet?",
+            //     options: [
+            //       { label: "Dog 🐶", value: "dog" },
+            //       { label: "Cat 😺", value: "cat" }
+            //     ],
+            //     disabled: true,
+            //   },
+            //   defaultValue: "dog"
+            // },
+            // {
+            //   name: "testcheckbox",
+            //   type: "checkbox",
+            //   props: {
+            //     label: "What is Your Favourite Pet?",
+            //     options: [
+            //       { label: "Dog 🐶", value: "dog" },
+            //       { label: "Cat 😺", value: "cat" },
+            //     ],
+            //     required: true // error
+            //   },
+            //   defaultValue: [],
+            // },
+            // {
+            //   name: "testradio",
+            //   type: "radio-group",
+            //   defaultValue: "dog",
+            //   props: {
+            //     label: "What is Your Favourite Pet?",
+            //     options: [
+            //       { label: "Dog 🐶", value: "dog" },
+            //       { label: "Cat 😺", value: "cat" },
+            //     ],
+            //     required: true, // error
+            //   }
+            // },
+            {
+              name: "testswitch",
+              type: "switch",
+              props: {
+                label: "What is Your Favourite Pet?",
+                required: true,
+              }
+            },
+          ],
+        }
+      ],
     },
-    // {
-    //   name: "testarea",
-    //   type: "textarea",
-    //   props: {
-    //     label: "Test",
-    //     required: true,
-    //     description: "what the fuck"
-    //   }
-    // },
-    // {
-    //   name: "testselect",
-    //   type: "select",
-    //   props: {
-    //     label: "What is Your Favourite Pet?",
-    //     options: [
-    //       { label: "Dog 🐶", value: "dog" },
-    //       { label: "Cat 😺", value: "cat" }
-    //     ],
-    //   }
-    // },
-    // {
-    //   name: "testcombobox",
-    //   type: "combobox",
-    //   props: {
-    //     label: "What is Your Favourite Pet?",
-    //     options: [
-    //       { label: "Dog 🐶", value: "dog" },
-    //       { label: "Cat 😺", value: "cat" }
-    //     ],
-    //   }
-    // },
-    // {
-    //   name: "testcheckbox",
-    //   type: "checkbox",
-    //   props: {
-    //     label: "What is Your Favourite Pet?",
-    //     options: [
-    //       { label: "Dog 🐶", value: "dog" },
-    //       { label: "Cat 😺", value: "cat" },
-    //     ],
-    //   }
-    // },
-    // {
-    //   name: "testradio",
-    //   type: "radio-group",
-    //   props: {
-    //     label: "What is Your Favourite Pet?",
-    //     options: [
-    //       { label: "Dog 🐶", value: "dog" },
-    //       { label: "Cat 😺", value: "cat" },
-    //     ],
-    //   }
-    // },
-    // {
-    //   name: "testswitch",
-    //   type: "switch",
-    //   props: {
-    //     label: "What is Your Favourite Pet?",
-    //     options: [
-    //       { label: "Dog 🐶", value: "dog" },
-    //       { label: "Cat 😺", value: "cat" },
-    //       { label: "Bird 🐦", value: "bird" },
-    //       { label: "Fish 🐟", value: "fish" },
-    //       { label: "Tasmanian Devil 😈", value: "devil" },
-    //     ],
-    //   }
-    // },
   ]
   let defaultValues = {}
   fields.forEach(field => {
     set(defaultValues, `${field.name}`, "")
   })
-  const form = useForm({defaultValues: defaultValues});
-
+  const form = useForm();
+  const model = {}
   return (
     <div>
-      <Formly key={"test"} form={form} fields={fields}/>
+      <Formly form={form} model={model} fields={fields}/>
     </div>
   );
 }

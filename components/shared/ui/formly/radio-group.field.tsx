@@ -8,10 +8,9 @@ export const RadioGroupField: React.FC<FormlyFieldConfig> = ({ field, props}) =>
     <FormControl>
       <RadioGroup
         onValueChange={field?.onChange}
-        defaultValue={field?.value}
         className="flex flex-col space-y-1"
       >
-        {props?.options?.map((option) => (
+        {props?.options?.map((option, index) => (
           <>
             <FormItem className="flex items-center space-x-3 space-y-0">
               <FormControl>

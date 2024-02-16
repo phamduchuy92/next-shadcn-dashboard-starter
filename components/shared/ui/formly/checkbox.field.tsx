@@ -11,7 +11,7 @@ export const CheckboxField: React.FC<FormlyFieldConfig> = ({ control, name, prop
           <FormField
             key={option.value}
             control={control}
-            name={name}
+            name={name!}
             render={({ field }) => {
               return (
                 <FormItem
@@ -21,8 +21,6 @@ export const CheckboxField: React.FC<FormlyFieldConfig> = ({ control, name, prop
                   <FormControl>
                     <Checkbox
                       checked={field.value?.includes(option.value)}
-                      value={field?.value}
-                      defaultValue={field?.value}
                       onCheckedChange={(checked) => {
                         return checked
                           ? field.onChange([...field.value, option.value])
@@ -32,6 +30,8 @@ export const CheckboxField: React.FC<FormlyFieldConfig> = ({ control, name, prop
                             )
                           )
                       }}
+                      disabled={props?.disabled ?? false}
+                      required={props?.required ?? false}
                     />
                   </FormControl>
                   <FormLabel className="text-sm font-normal">
