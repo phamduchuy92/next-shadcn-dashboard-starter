@@ -11,7 +11,7 @@ import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AlertModal } from "@/components/shared/ui/data-list/alert-modal";
-import useSWR from "swr";
+import { useSWRConfig } from "swr";
 import { getEndpointFor } from "@/components/shared/config/application-config.service";
 
 interface CellActionProps {
@@ -24,19 +24,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data, apiEndpoint, micro
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { mutate } = useSWRConfig()
 
-  console.log("url", getEndpointFor(apiEndpoint, microservice))
-  const fetcherDelete = (url: string) => fetch(`${url}/${data.id}`, {
-    method: "DELETE"
-  }).then((res) => res.json());
-  useSWR(`${getEndpointFor(apiEndpoint, microservice)}`, fetcherDelete)
-  // const fetcherDelete = (url: string) => fetch(`${url}/${data.id}`, {
-  //   method: "DELETE"
-  // }).then((res) => res.json());
-  // const { error, isLoading } = useSWR(`${getEndpointFor(apiEndpoint, microservice)}`, fetcherDelete)
   const onConfirm = async () => {
-
-    setOpen(false)
+    await fetch(`${getEndpointFor(apiEndpoint, microservice)}/${data.id}`, {
+        method: "DELETE"
+    });
+    await mutate(`${getEndpointFor(apiEndpoint, microservice)}`);
+    setOpen(false);
   };
 
   return (
@@ -47,7 +42,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, apiEndpoint, micro
         onConfirm={onConfirm}
         loading={loading}
       />
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
             <span className="sr-only">Open menu</span>
@@ -58,7 +53,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, apiEndpoint, micro
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/admin/user/${data.id}`)}
+            onClick={() => router.push(`/dashboard/user/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

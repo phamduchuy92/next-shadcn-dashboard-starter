@@ -13,6 +13,7 @@ export default function page() {
     {
       accessorKey: "description",
       header: "DESCRIPTION",
+      enableSorting: true,
     }
   ];
   const fields: FormlyFieldConfig[] = [

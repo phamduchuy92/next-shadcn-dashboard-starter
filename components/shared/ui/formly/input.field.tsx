@@ -10,7 +10,6 @@ export const InputField: React.FC<FormlyFieldConfig> = ({ field, props}) => {
              readOnly={props?.readonly ?? false}
              disabled={props?.disabled ?? false}
              required={props?.required ?? false}
-             value={field?.value}
              {...field}
       />
     </FormControl>
