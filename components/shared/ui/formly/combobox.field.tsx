@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 
-export const ComboboxField: React.FC<FormlyFieldConfig> = ({ field, name, form, control, props}) => {
+export const ComboboxField: React.FC<FormlyFieldConfig> = ({ field, name, form, props}) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -19,6 +19,7 @@ export const ComboboxField: React.FC<FormlyFieldConfig> = ({ field, name, form, 
               "w-[200px] justify-between",
               !field?.value && "text-muted-foreground"
             )}
+            disabled={props?.disabled ?? false}
           >
             {field?.value
               ? props?.options?.find(
@@ -42,14 +43,15 @@ export const ComboboxField: React.FC<FormlyFieldConfig> = ({ field, name, form, 
                 value={option.label}
                 key={option.value}
                 onSelect={(value) => {
-                  form?.setValue(name, option.value)
+                  form?.setValue(name!, option.value)
                 }}
+                disabled={props?.disabled ?? false}
               >
                 {option.label}
                 <CheckIcon
                   className={cn(
                     "ml-auto h-4 w-4",
-                    option.value === field?.value
+                      option.value === field?.value
                       ? "opacity-100"
                       : "opacity-0"
                   )}
