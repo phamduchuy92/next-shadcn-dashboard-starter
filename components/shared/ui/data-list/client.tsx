@@ -9,25 +9,62 @@ import { getEndpointFor } from "@/components/shared/config/application-config.se
 import { ColumnDef } from "@tanstack/react-table";
 import useSWR from "swr";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { CellAction } from "@/components/shared/ui/data-list/cell-action";
+import { columns } from "@/components/tables/employee-tables/columns";
+import { EmployeeTable } from "@/components/tables/employee-tables/employee-table";
+import { DataList } from "@/components/shared/ui/data-list/data-list";
+import BreadCrumb, { BreadCrumbType } from "@/components/breadcrumb";
+import { Employee } from "@/constants/data";
+import { Modal } from "@/components/ui/modal";
+import { Formly } from "@/components/shared/ui/formly/formly";
+import { useForm } from "react-hook-form";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
 
 interface DataListProps {
   title: string;
+  breadcrumb: BreadCrumbType[];
   apiEndpoint: string;
   microservice?: string;
   columns: ColumnDef<any, unknown>[];
-  fields?: any[];
+  fields: any[];
+  page: number;
+  size: number;
 }
 
-export const DataListClient: React.FC<DataListProps> = ({ title, apiEndpoint, microservice, columns, fields }) => {
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
+export const DataListClient: React.FC<DataListProps> = ({
+                                                          title,
+                                                          breadcrumb,
+                                                          apiEndpoint,
+                                                          microservice,
+                                                          columns,
+                                                          fields,
+                                                          page,
+                                                          size}) => {
   const router = useRouter();
   const pathname = usePathname();
-  const fetcherGet = (url: string) => fetch(url).then((res) => res.json());
-  const { data, error, isLoading } = useSWR(`${getEndpointFor(apiEndpoint, microservice)}`, fetcherGet)
+  var total = 0
+  const fetcherGet = (url: string) => fetch(url).then((res) => {
+    total = Number(res.headers.get('X-Total-Count'))
+    return res.json();
+  });
+  const { data, error, isLoading } = useSWR(`${getEndpointFor(apiEndpoint)}`, fetcherGet)
+  const pageCount = Math.ceil(total / size);
+
+  const [model, setModel] = useState({});
+  const [state] = useState({
+    mainModel: model
+  });
+  const form = useForm(model);
   const onConfirm = async () => {};
+  const [isOpen, setIsOpen] = useState(false)
   // columns.unshift({
   //   id: "select",
   //   header: ({ table }) => (
@@ -47,35 +84,62 @@ export const DataListClient: React.FC<DataListProps> = ({ title, apiEndpoint, mi
   //   enableSorting: false,
   //   enableHiding: false,
   // });
-  // console.log("path", pathname)
   return (
     <>
-      <div className="flex items-start justify-between">
-        <Heading
-          title={title}
-          // description="Manage users (Client side table functionalities.)"
-        />
-        <div>
-          <Button
-            className="text-xs md:text-sm"
-            onClick={() => router.refresh()}
-            variant="outline"
-          >
-            <RefreshCcw className="mr-2 h-4 w-4" /> Làm Mới
-          </Button>
-          <Button
-            className="text-xs md:text-sm"
-            onClick={() => router.push(`/${pathname}/new`)}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Tạo Thêm
-          </Button>
+      <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{"TEST"}</DialogTitle>
+          </DialogHeader>
+          <div>
+            <Formly form={form} watch={form.watch} fields={fields} model={model} setModel={setModel} state={state} handleSubmit={() => console.log("model", model)}/>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsOpen(!isOpen)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={onConfirm}>
+              Continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
+        <BreadCrumb items={breadcrumb} />
+        <div className="flex items-start justify-between">
+          <Heading
+            title={title}
+            // description="Manage users (Client side table functionalities.)"
+          />
+          <div>
+            <Button
+              className="text-xs md:text-sm"
+              onClick={() => router.refresh()}
+              variant="outline"
+            >
+              <RefreshCcw className="mr-2 h-4 w-4" /> Refresh
+            </Button>
+            <Button
+              className="text-xs md:text-sm"
+              onClick={() => setIsOpen(true)}
+            >
+              <Plus className="mr-2 h-4 w-4" /> Add New
+            </Button>
+          </div>
         </div>
+        <Separator />
+        <DataList
+          searchKey="name"
+          pageNo={page}
+          columns={columns.concat({
+            id: "actions",
+            cell: ({ row }) => <CellAction data={row.original} apiEndpoint={apiEndpoint} microservice={microservice} />,
+          })}
+          total={total}
+          data={data ?? []}
+          pageCount={pageCount}
+        />
       </div>
-      <Separator />
-      <DataTable searchKey="name" columns={columns.concat({
-        id: "actions",
-        cell: ({ row }) => <CellAction data={row.original} apiEndpoint={apiEndpoint} microservice={microservice} />,
-      })} data={data ?? []} />
     </>
   );
 };

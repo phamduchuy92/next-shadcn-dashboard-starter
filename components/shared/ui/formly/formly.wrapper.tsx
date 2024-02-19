@@ -7,9 +7,7 @@ import { FormlyFieldConfig } from "@/components/shared/ui/formly/formly";
 interface FormlyWrapperProps {
   field: ControllerRenderProps;
   form: UseFormReturn;
-  model: any;
   config: FormlyFieldConfig;
-  onChange?(field: any): void;
 }
 
 export const FormlyWrapper: React.FC<FormlyWrapperProps> = ({ field, form, config }) => {
