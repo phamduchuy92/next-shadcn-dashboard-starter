@@ -3,7 +3,7 @@ import { ChevronRightIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import React from "react";
 
-type BreadCrumbType = {
+export type BreadCrumbType = {
   title: string;
   link: string;
 };
