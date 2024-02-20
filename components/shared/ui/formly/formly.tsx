@@ -1,9 +1,10 @@
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Control, ControllerRenderProps, FieldValues, UseFormReturn, UseFormWatch } from "react-hook-form";
+import { ControllerRenderProps, FieldValues, UseFormReturn, UseFormWatch } from "react-hook-form";
 import React, { useState } from "react";
 import { FormlyField } from "@/components/shared/ui/formly/formly.field";
-import {assign,set,clone} from 'lodash';
+import { assign, set } from "lodash";
+
 export interface FormlyFieldConfig {
   type?: string;
   name?: string;
@@ -29,10 +30,10 @@ export interface FormlyFieldConfig {
   config?: FormlyFieldConfig;
   model?: any;
   state?: any;
-  watch?: {
-    [property: string]: UseFormWatch<FieldValues>;
-  }
-  // watch?: UseFormWatch<FieldValues>;
+  // watch?: {
+  //   [property: string]: UseFormWatch<FieldValues>;
+  // }
+  watch?: UseFormWatch<FieldValues>;
   expressions?: {
     [property: string]: any;
   };
@@ -76,6 +77,7 @@ export const Formly: React.FC<FormlyProps> = ({ form, watch, fields, model, stat
       setFormChanged(false);
     }
   }, [formChanged]);
+
   React.useEffect(() => {
     const subscription = watch((values, { name,type }) => {
       setModel(assign(model, values));
@@ -91,21 +93,13 @@ export const Formly: React.FC<FormlyProps> = ({ form, watch, fields, model, stat
     formlyFields.forEach(field => {
       if (!field.model) field.model = model;
       if (!field.state) field.state = state;
-      // if (!field.watch && field.name && watch) {
-      //   set(field.watch, field.name, watch(field.name));
-      // }
+      if (!field.watch) field.watch = watch;
       if (field.expressions) {
         Object.keys(field.expressions).forEach(key => {
           if (field.expressions && field.expressions[key]) {
             const expr = evalStringExpression(field.expressions[key], ['model', 'state', 'watch'])
             const exprValue = evalExpression(expr, { field }, [field.model, field.state, field.watch])
             set(field, key, exprValue)
-            if (key.startsWith("model.")) {
-              // console.log("key", key.replace("model.", ""), exprValue)
-              // form.setValue(key.replace("model.", ""), exprValue)
-              // set(field, key.replace("model.", ""), exprValue)
-              // setModel(set(model, key.replace("model.", ""), exprValue))
-            }
           }
         })
       } else if (field.fieldGroup) {
@@ -115,17 +109,36 @@ export const Formly: React.FC<FormlyProps> = ({ form, watch, fields, model, stat
   }
 
   populateConfig(fields);
+  const renderFields = (fields: FormlyFieldConfig[], suffix?: string) => {
+    return fields.map((config, index) => {
+      if (!config.fieldGroup) {
+        return (
+          <FormlyField key={`${config.name}${suffix}`}
+                       form={form}
+                       config={config}
+          />
+        )
+      } else if (config.fieldGroup) {
+        return (
+          <div key={`fieldGroup_${index}`} className={config.fieldGroupClassName ?? ""}>
+            {renderFields(config.fieldGroup, `_fieldGroup_${index}`)}
+          </div>
+        )
+      }
+    });
+  }
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit ? form.handleSubmit(handleSubmit) : form.handleSubmit(onSubmit)} className="space-y-8">
-        {fields.map(config => {
-          return (
-            <FormlyField key={`${config.name}`}
-                         form={form}
-                         config={config}
-            />
-          )
-        })}
+      <form onSubmit={handleSubmit ? form.handleSubmit(handleSubmit) : form.handleSubmit(onSubmit)} className="space-y-8 w-full">
+        {/*{fields.map(config => {*/}
+        {/*  return (*/}
+        {/*    <FormlyField key={`${config.name}`}*/}
+        {/*                 form={form}*/}
+        {/*                 config={config}*/}
+        {/*    />*/}
+        {/*  )*/}
+        {/*})}*/}
+        {renderFields(fields)}
         <Button type="submit">Submit</Button>
       </form>
     </Form>
