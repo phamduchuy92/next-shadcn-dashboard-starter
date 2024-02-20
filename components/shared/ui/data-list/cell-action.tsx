@@ -16,16 +16,17 @@ import { getEndpointFor } from "@/components/shared/config/application-config.se
 
 interface CellActionProps {
   data: any;
+  pathname: string;
   apiEndpoint: string;
   microservice?: string;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ data, apiEndpoint, microservice }) => {
+export const CellAction: React.FC<CellActionProps> = ({ data, pathname, apiEndpoint, microservice }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { mutate } = useSWRConfig()
-
+  console.log("pathname", pathname)
   const onConfirm = async () => {
     await fetch(`${getEndpointFor(apiEndpoint, microservice)}/${data.id}`, {
         method: "DELETE"
@@ -53,7 +54,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, apiEndpoint, micro
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/user/${data.id}`)}
+            onClick={() => router.push(`${pathname}/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
