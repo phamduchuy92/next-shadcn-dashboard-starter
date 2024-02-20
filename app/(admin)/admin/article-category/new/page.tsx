@@ -15,12 +15,13 @@ import { Separator } from "@/components/ui/separator";
 export default function Page() {
   const breadcrumbItems = [
     { title: "Danh Mục Bài Viết", link: "/admin/article-category" },
-    { title: "Chỉnh sửa", link: "/admin/article-category/new" },
+    { title: "Thêm mới", link: "/admin/article-category/new" },
   ];
-  const title = "Chỉnh sửa";
-  const apiEndpoint = "/api/v1/article-categories"
+  const title = "Thêm mới";
+  const apiEndpoint = "/api/v1/article-categories";
   const fields: FormlyFieldConfig[] = [
     {
+      name: "test",
       fieldGroupClassName: "md:grid md:grid-cols-3 gap-8",
       fieldGroup: [
         {
@@ -46,7 +47,6 @@ export default function Page() {
     }
   ];
 
-  const params = useParams<{ id: string }>()
   const router = useRouter();
   const pathname = usePathname();
   const [model, setModel] = useState<{
@@ -56,24 +56,10 @@ export default function Page() {
     mainModel: model
   });
   const form = useForm(model);
-  const fetcherGetDetail = async (url: string) => {
-    const res = await fetch(url);
-    const data = await res.json();
-    setModel(data);
-    return data;
-  };
-  useSWR(`${getEndpointFor(apiEndpoint)}/${params.id}`, fetcherGetDetail);
-
-  useEffect(() => {
-    Object.keys(model).forEach(key=>{
-      form.setValue(key, model[key])
-    });
-    form.watch();
-  }, [model]);
 
   const onSubmit = () => {
     fetch(`${getEndpointFor(apiEndpoint)}`, {
-      method: "PUT",
+      method: "POST",
       headers:{'content-type': 'application/json'},
       body: JSON.stringify(model),
     }).then(() => {

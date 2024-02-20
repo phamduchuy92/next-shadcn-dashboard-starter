@@ -1,5 +1,7 @@
 import { DataListClient } from "@/components/shared/ui/data-list/client";
 import { FormlyFieldConfig } from "@/components/shared/ui/formly/formly";
+import BreadCrumb from "@/components/breadcrumb";
+import React from "react";
 
 const breadcrumbItems = [{ title: "Danh Mục Bài Viết", link: "/admin/article-category" }];
 type paramsProps = {
@@ -14,8 +16,13 @@ export default function page({ searchParams }: paramsProps) {
   const offset = (page - 1) * size;
 
   const title = "Danh Mục Bài Viết";
-  const apiEndpoint = "api/v1/article-categories"
+  const apiEndpoint = "/api/v1/article-categories"
   const columns = [
+    {
+      accessorKey: "id",
+      header: "ID",
+      enableSorting: true,
+    },
     {
       accessorKey: "name",
       header: "NAME",
@@ -52,14 +59,18 @@ export default function page({ searchParams }: paramsProps) {
     },
   ];
   return (
-    <DataListClient
-      title={title}
-      apiEndpoint={apiEndpoint}
-      columns={columns}
-      breadcrumb={breadcrumbItems}
-      fields={fields}
-      page={page}
-      size={size}
-    />
+    <>
+      <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
+        <BreadCrumb items={breadcrumbItems} />
+        <DataListClient
+          title={title}
+          apiEndpoint={apiEndpoint}
+          columns={columns}
+          fields={fields}
+          page={page}
+          size={size}
+        />
+      </div>
+    </>
   );
 }

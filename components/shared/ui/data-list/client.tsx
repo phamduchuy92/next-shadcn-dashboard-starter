@@ -27,10 +27,10 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 interface DataListProps {
   title: string;
-  breadcrumb: BreadCrumbType[];
   apiEndpoint: string;
   microservice?: string;
   columns: ColumnDef<any, unknown>[];
@@ -41,7 +41,6 @@ interface DataListProps {
 
 export const DataListClient: React.FC<DataListProps> = ({
                                                           title,
-                                                          breadcrumb,
                                                           apiEndpoint,
                                                           microservice,
                                                           columns,
@@ -51,11 +50,11 @@ export const DataListClient: React.FC<DataListProps> = ({
   const router = useRouter();
   const pathname = usePathname();
   var total = 0
-  const fetcherGet = (url: string) => fetch(url).then((res) => {
+  const fetcherGetList = (url: string) => fetch(url).then((res) => {
     total = Number(res.headers.get('X-Total-Count'))
     return res.json();
   });
-  const { data, error, isLoading } = useSWR(`${getEndpointFor(apiEndpoint)}`, fetcherGet)
+  const dataList = useSWR(`${getEndpointFor(apiEndpoint)}`, fetcherGetList)
   const pageCount = Math.ceil(total / size);
 
   const [model, setModel] = useState({});
@@ -86,60 +85,39 @@ export const DataListClient: React.FC<DataListProps> = ({
   // });
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{"TEST"}</DialogTitle>
-          </DialogHeader>
-          <div>
-            <Formly form={form} watch={form.watch} fields={fields} model={model} setModel={setModel} state={state} handleSubmit={() => console.log("model", model)}/>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsOpen(!isOpen)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={onConfirm}>
-              Continue
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
-        <BreadCrumb items={breadcrumb} />
-        <div className="flex items-start justify-between">
-          <Heading
-            title={title}
-            // description="Manage users (Client side table functionalities.)"
-          />
-          <div>
-            <Button
-              className="text-xs md:text-sm"
-              onClick={() => router.refresh()}
-              variant="outline"
-            >
-              <RefreshCcw className="mr-2 h-4 w-4" /> Refresh
-            </Button>
-            <Button
-              className="text-xs md:text-sm"
-              onClick={() => setIsOpen(true)}
-            >
-              <Plus className="mr-2 h-4 w-4" /> Add New
-            </Button>
-          </div>
-        </div>
-        <Separator />
-        <DataList
-          searchKey="name"
-          pageNo={page}
-          columns={columns.concat({
-            id: "actions",
-            cell: ({ row }) => <CellAction data={row.original} apiEndpoint={apiEndpoint} microservice={microservice} />,
-          })}
-          total={total}
-          data={data ?? []}
-          pageCount={pageCount}
+      <div className="flex items-start justify-between">
+        <Heading
+          title={title}
+          description={''}
         />
+        <div>
+          <Button
+            className="text-xs md:text-sm"
+            onClick={() => router.refresh()}
+            variant="outline"
+          >
+            <RefreshCcw className="mr-2 h-4 w-4" /> Refresh
+          </Button>
+          <Button
+            className="text-xs md:text-sm"
+            onClick={() => router.push(`${pathname}/new`)}
+          >
+            <Plus className="mr-2 h-4 w-4" /> Add New
+          </Button>
+        </div>
       </div>
+      <Separator />
+      <DataList
+        searchKey="name"
+        pageNo={page}
+        columns={columns.concat({
+          id: "actions",
+          cell: ({ row }) => <CellAction data={row.original} pathname={pathname} apiEndpoint={apiEndpoint} microservice={microservice} />,
+        })}
+        total={total}
+        data={dataList.data ?? []}
+        pageCount={pageCount}
+      />
     </>
   );
 };
